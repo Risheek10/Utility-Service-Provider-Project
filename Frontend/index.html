@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Utility Billing System</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Utility Billing System</h1>
+        
+        <div id="customerSection">
+            <h2>Customer Portal</h2>
+            <input type="number" id="customerId" placeholder="Enter Customer ID">
+            <button onclick="loadCustomer()">Load</button>
+            <div id="customerInfo"></div>
+        </div>
+        
+        <div id="billSection" style="display:none;">
+            <h2>Bill Details</h2>
+            <table id="usageTable">
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Usage</th>
+                        <th>Rate</th>
+                        <th>Cost</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <p>Total Due: $<span id="totalDue">0.00</span></p>
+        </div>
+    </div>
+
+    <script>
+        function loadCustomer() {
+            // In a real app, this would call your C++ backend
+            // For now, we'll use mock data
+            const customerId = document.getElementById('customerId').value;
+            
+            // Mock response - replace with actual API call
+            const mockCustomer = {
+                id: customerId,
+                name: "John Doe",
+                usage: {
+                    "Electricity": 120,
+                    "Water": 50
+                },
+                balance: 85.50
+            };
+            
+            displayCustomer(mockCustomer);
+        }
+        
+        function displayCustomer(customer) {
+            document.getElementById('customerInfo').innerHTML = `
+                <p>Name: ${customer.name}</p>
+                <p>Customer ID: ${customer.id}</p>
+                <p>Current Balance: $${customer.balance.toFixed(2)}</p>
+            `;
+            
+            // Generate bill display
+            const tableBody = document.querySelector('#usageTable tbody');
+            tableBody.innerHTML = '';
+            
+            let total = 0;
+            for (const [service, units] of Object.entries(customer.usage)) {
+                const rate = getRateForService(service);
+                const cost = units * rate;
+                total += cost;
+                
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${service}</td>
+                        <td>${units} units</td>
+                        <td>$${rate.toFixed(2)}/unit</td>
+                        <td>$${cost.toFixed(2)}</td>
+                    </tr>
+                `;
+            }
+            
+            document.getElementById('totalDue').textContent = total.toFixed(2);
+            document.getElementById('billSection').style.display = 'block';
+        }
+        
+        function getRateForService(service) {
+            // Mock rates - replace with actual data from backend
+            const rates = {
+                "Electricity": 0.12,
+                "Water": 0.05,
+                "Internet": 45.99
+            };
+            return rates[service] || 0;
+        }
+    </script>
+</body>
+</html>
