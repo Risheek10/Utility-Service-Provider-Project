@@ -4,6 +4,12 @@ import os
 
 PORT = 8000
 
+class MyCGIServer(socketserver.TCPServer):
+    def __init__(self, server_address, handler_class):
+        super().__init__(server_address, handler_class)
+        self.server_name = "localhost"  # Added server_name
+        self.server_port = server_address[1]  # Added server_port
+
 class Handler(http.server.CGIHTTPRequestHandler):
     cgi_directories = ["/cgi-bin"]
 
@@ -17,7 +23,7 @@ if not os.path.exists("cgi-bin/billing.cgi"):
         os.symlink("../billing", "cgi-bin/billing.cgi")
     os.chmod("cgi-bin/billing.cgi", 0o755)
 
-with socketserver.TCPServer(("", PORT), Handler) as httpd:
+with MyCGIServer(("", PORT), Handler) as httpd:
     print(f"Serving at http://localhost:{PORT}")
     print("Press Ctrl+C to stop")
     try:

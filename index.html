@@ -1,12 +1,91 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Utility Billing System</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 8px; border: 1px solid #ddd; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 10px;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background: #007BFF;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #customerInfo, #billSection {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #007BFF;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        #totalDue {
+            font-size: 18px;
+            font-weight: bold;
+            color: #d9534f;
+        }
     </style>
 </head>
 <body>
@@ -39,45 +118,47 @@
 
     <script>
         function loadCustomer() {
-            // In a real app, this would call your C++ backend
-            // For now, we'll use mock data
             const customerId = document.getElementById('customerId').value;
+            if (!customerId) {
+                alert("Please enter a valid Customer ID.");
+                return;
+            }
             
-            // Mock response - replace with actual API call
-            const mockCustomer = {
-                id: customerId,
-                name: "John Doe",
-                usage: {
-                    "Electricity": 120,
-                    "Water": 50
-                },
-                balance: 85.50
-            };
-            
-            displayCustomer(mockCustomer);
+            fetch(`/cgi-bin/billing.cgi?id=${customerId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('customerInfo').innerHTML = `<p style="color:red;">${data.error}</p>`;
+                        document.getElementById('billSection').style.display = 'none';
+                    } else {
+                        displayCustomer(data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching customer data:', error);
+                });
         }
-        
+
         function displayCustomer(customer) {
             document.getElementById('customerInfo').innerHTML = `
-                <p>Name: ${customer.name}</p>
-                <p>Customer ID: ${customer.id}</p>
-                <p>Current Balance: $${customer.balance.toFixed(2)}</p>
+                <p><strong>Name:</strong> ${customer.name}</p>
+                <p><strong>Customer ID:</strong> ${customer.id}</p>
+                <p><strong>Current Balance:</strong> $${customer.balance.toFixed(2)}</p>
             `;
             
-            // Generate bill display
             const tableBody = document.querySelector('#usageTable tbody');
             tableBody.innerHTML = '';
-            
+
             let total = 0;
-            for (const [service, units] of Object.entries(customer.usage)) {
-                const rate = getRateForService(service);
-                const cost = units * rate;
+            for (const service in customer.costs) {
+                const cost = customer.costs[service];
+                const rate = cost / customer.usage[service]; // Calculate rate
                 total += cost;
                 
                 tableBody.innerHTML += `
                     <tr>
                         <td>${service}</td>
-                        <td>${units} units</td>
+                        <td>${customer.usage[service]} units</td>
                         <td>$${rate.toFixed(2)}/unit</td>
                         <td>$${cost.toFixed(2)}</td>
                     </tr>
@@ -86,16 +167,6 @@
             
             document.getElementById('totalDue').textContent = total.toFixed(2);
             document.getElementById('billSection').style.display = 'block';
-        }
-        
-        function getRateForService(service) {
-            // Mock rates - replace with actual data from backend
-            const rates = {
-                "Electricity": 0.12,
-                "Water": 0.05,
-                "Internet": 45.99
-            };
-            return rates[service] || 0;
         }
     </script>
 </body>
