@@ -118,33 +118,29 @@ nav a:hover {
 
   </style>
 </head>
+
 <body>
 
-  <header>
-    <h1>Utility Services Management System</h1>
-    <img src="images/logo.png" alt="CoolUtil Logo" class="logo">
-  
-    <nav style="margin-top: 10px; text-align: center;">
-      <a href="index.html" style="margin-right: 15px; text-decoration: none; color: #007BFF;">Home</a>
-      <a href="search.html" style="text-decoration: none; color: #007BFF;">File Search</a>
-    </nav>
-  </header>
-  
+  <!-- Navigation -->
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="search.html">File Search</a>
+  </nav>
+
+  <!-- Main Content -->
   <div class="container">
-    <h1>Utility Billing System</h1>
+    <h2>Utility Billing System</h2>
 
     <!-- Search Section -->
-    <div>
-      <h2>Search</h2>
+    <div style="display: flex; flex-direction: column; align-items: center;">
       <input type="number" id="customerId" placeholder="Enter Customer ID">
       <button onclick="searchCustomer()">Search Customer</button>
-      <br><br>
-    <input type="number" id="providerId" placeholder="Enter Provider ID">
-    <button onclick="searchProvider()">Search Provider (All Time)</button>
-    
-    <br><br>
-    
-    <div id="monthControls" style="display: none;">
+      <br>
+      <input type="number" id="providerId" placeholder="Enter Provider ID">
+      <button onclick="searchProvider()">Search Provider (All Time)</button>
+      <br>
+
+      <div id="monthControls" style="display: none;">
         <label for="monthSelect">Select Month:</label>
         <select id="monthSelect">
           <option value="1">Month 1</option>
@@ -158,14 +154,12 @@ nav a:hover {
       </div>
     </div>
 
-    <!-- Customer Results -->
+    <!-- Results -->
     <div id="customerSearchResults" class="result-section"></div>
-
-    <!-- Provider Results -->
     <div id="providerSearchResults" class="result-section"></div>
-
     <div id="error"></div>
   </div>
+  
 
   <script>
     function searchCustomer(paid = false) {
