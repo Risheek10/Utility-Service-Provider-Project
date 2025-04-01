@@ -1,244 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Utility Billing System</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        
-        .container {
-            background: white;
-            padding: 20px;
-            max-width: 600px;
-            width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Utility Billing System</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-        input {
-            padding: 10px;
-            width: 80%;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
+    .container {
+      background: white;
+      padding: 20px;
+      max-width: 800px;
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
 
-        button {
-            background: #007BFF;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
 
-        button:hover {
-            background: #0056b3;
-        }
+    input {
+      padding: 10px;
+      margin-bottom: 10px;
+      width: 60%;
+      font-size: 16px;
+    }
 
-        #customerInfo, #billSection, #auditorSection {
-            margin-top: 20px;
-            text-align: left;
-        }
+    button {
+      padding: 10px 15px;
+      margin: 0 5px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
+    button:hover {
+      background-color: #0056b3;
+    }
 
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
+    .result-section {
+      margin-top: 20px;
+    }
 
-        th {
-            background: #007BFF;
-            color: white;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
 
-        tr:nth-child(even) {
-            background: #f9f9f9;
-        }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
 
-        #totalDue {
-            font-size: 18px;
-            font-weight: bold;
-            color: #d9534f;
-        }
+    th {
+      background-color: #007BFF;
+      color: white;
+    }
 
-        #error {
-            color: red;
-            font-size: 14px;
-        }
-
-        #loginSection {
-            display: block;
-        }
-
-        #customerSection, #auditorSection {
-            display: none;
-        }
-    </style>
+    .total {
+      font-weight: bold;
+      color: #d9534f;
+      font-size: 18px;
+      text-align: right;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Utility Billing System</h1>
+  <div class="container">
+    <h1>Utility Billing System</h1>
 
-        <!-- Login Section -->
-        <div id="loginSection">
-            <h2>Login</h2>
-            <input type="text" id="username" placeholder="Enter Username">
-            <button onclick="login()">Login</button>
-            <div id="error"></div>
-        </div>
+    <h2>Search</h2>
+    <input type="number" id="customerId" placeholder="Enter Customer ID" />
+    <button onclick="searchCustomer()">Search Customer</button><br />
+    <input type="number" id="providerId" placeholder="Enter Provider ID" />
+    <button onclick="searchProvider()">Search Provider</button>
 
-        <!-- Customer Portal -->
-        <div id="customerSection">
-            <h2>Customer Portal</h2>
-            <input type="number" id="customerId" placeholder="Enter Customer ID">
-            <button onclick="loadCustomer()">Load</button>
-            <div id="customerInfo"></div>
-            <div id="error"></div> <!-- Display error if any -->
-            <button onclick="goToLogin()">Back to Login</button> <!-- Logout button -->
-        </div>
+    <div id="customerSearchResults" class="result-section"></div>
+    <div id="providerSearchResults" class="result-section"></div>
+  </div>
 
-        <!-- Auditor Portal -->
-        <div id="auditorSection">
-            <h2>Auditor Portal</h2>
-            <button onclick="viewCustomers()">View Customer List</button>
-            <div id="auditorInfo"></div>
-            <button onclick="goToLogin()">Back to Login</button> <!-- Logout button -->
-        </div>
+  <script>
+    function searchCustomer() {
+      const id = document.getElementById("customerId").value;
+      if (!id) return alert("Enter a Customer ID");
 
-        <!-- Bill Section -->
-        <div id="billSection" style="display:none;">
-            <h2>Bill Details</h2>
-            <table id="usageTable">
-                <thead>
-                    <tr>
-                        <th>Service</th>
-                        <th>Usage</th>
-                        <th>Rate</th>
-                        <th>Cost</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            <p>Total Due: $<span id="totalDue">0.00</span></p>
-        </div>
-    </div>
+      fetch(`/cgi-bin/billing.cgi?id=${id}`)
+        .then(res => res.json())
+        .then(data => {
+          const section = document.getElementById("customerSearchResults");
+          section.innerHTML = "";
 
-    <script>
-        let currentRole = '';
+          if (data.error) {
+            section.innerHTML = `<p style="color:red;">${data.error}</p>`;
+            return;
+          }
 
-        function login() {
-            const username = document.getElementById('username').value;
-            if (username === 'customer1') {
-                currentRole = 'customer';
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('customerSection').style.display = 'block';
-            } else if (username === 'auditor1') {
-                currentRole = 'auditor';
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('auditorSection').style.display = 'block';
-            } else {
-                document.getElementById('error').textContent = 'Invalid username.';
-            }
-        }
+          let html = `
+            <h3>Customer: ${data.name} (ID: ${data.id})</h3>
+            <table>
+              <tr>
+                <th>Service</th>
+                <th>Provider</th>
+                <th>Usage</th>
+                <th>Fixed Rate</th>
+                <th>Unit Rate</th>
+                <th>Cost</th>
+              </tr>`;
 
-        function loadCustomer() {
-            const customerId = document.getElementById('customerId').value;
-            if (!customerId) {
-                alert("Please enter a valid Customer ID.");
-                return;
-            }
+          let total = 0;
+          for (const service in data.services) {
+            const s = data.services[service];
+            total += s.cost;
+            html += `
+              <tr>
+                <td>${service}</td>
+                <td>${s.provider}</td>
+                <td>${s.usage}</td>
+                <td>$${s.fixed.toFixed(2)}</td>
+                <td>$${s.rate.toFixed(2)}</td>
+                <td>$${s.cost.toFixed(2)}</td>
+              </tr>`;
+          }
 
-            fetch(`/cgi-bin/billing.cgi?id=${customerId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        document.getElementById('customerInfo').innerHTML = "";
-                        document.getElementById('error').innerHTML = `Error: ${data.error}`;
-                        document.getElementById('billSection').style.display = 'none';
-                    } else {
-                        displayCustomer(data);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching customer data:', error);
-                    document.getElementById('error').innerHTML = "An error occurred while fetching data.";
-                });
-        }
+          html += `</table><div class="total">Total Owed: $${total.toFixed(2)}</div>`;
+          section.innerHTML = html;
+        })
+        .catch(err => {
+          document.getElementById("customerSearchResults").innerHTML =
+            "<p style='color:red;'>Error loading customer.</p>";
+        });
+    }
 
-        function displayCustomer(customer) {
-            document.getElementById('customerInfo').innerHTML = `
-                <p><strong>Name:</strong> ${customer.name}</p>
-                <p><strong>Customer ID:</strong> ${customer.id}</p>
-                <p><strong>Current Balance:</strong> $${customer.balance.toFixed(2)}</p>
-            `;
-            
-            const tableBody = document.querySelector('#usageTable tbody');
-            tableBody.innerHTML = '';
+    function searchProvider() {
+      const id = document.getElementById("providerId").value;
+      if (!id) return alert("Enter a Provider ID");
 
-            let total = 0;
-            for (const service in customer.costs) {
-                const cost = customer.costs[service];
-                const rate = cost / customer.usage[service]; // Calculate rate
-                total += cost;
-                
-                tableBody.innerHTML += `
-                    <tr>
-                        <td>${service}</td>
-                        <td>${customer.usage[service]} units</td>
-                        <td>$${rate.toFixed(2)}/unit</td>
-                        <td>$${cost.toFixed(2)}</td>
-                    </tr>
-                `;
-            }
-            
-            document.getElementById('totalDue').textContent = total.toFixed(2);
-            document.getElementById('billSection').style.display = 'block';
-        }
+      fetch(`/cgi-bin/billing.cgi?provider=${id}`)
+        .then(res => res.json())
+        .then(data => {
+          const section = document.getElementById("providerSearchResults");
+          section.innerHTML = "";
 
-        function viewCustomers() {
-            const customerList = ['customer1', 'customer2', 'customer3'];
-            let customerListHtml = "<ul>";
-            customerList.forEach(customer => {
-                customerListHtml += `<li>${customer}</li>`;
-            });
-            customerListHtml += "</ul>";
-            document.getElementById('auditorInfo').innerHTML = `Customer List: ${customerListHtml}`;
-        }
+          if (data.error) {
+            section.innerHTML = `<p style="color:red;">${data.error}</p>`;
+            return;
+          }
 
-        function goToLogin() {
-            // Reset the page to show the login form
-            document.getElementById('customerSection').style.display = 'none';
-            document.getElementById('auditorSection').style.display = 'none';
-            document.getElementById('loginSection').style.display = 'block';
-            document.getElementById('username').value = ''; // Clear the username input
-            document.getElementById('error').textContent = ''; // Clear any error messages
-        }
-    </script>
+          let html = `<h3>Provider: ${data.provider}</h3>`;
+          html += `
+            <table>
+              <tr>
+                <th>Customer Name</th>
+                <th>Email</th>
+                <th>Services</th>
+              </tr>`;
+
+          data.customers.forEach(cust => {
+            html += `
+              <tr>
+                <td>${cust.name}</td>
+                <td>${cust.email}</td>
+                <td>${cust.services.join(", ")}</td>
+              </tr>`;
+          });
+
+          html += `</table>`;
+          section.innerHTML = html;
+        })
+        .catch(err => {
+          document.getElementById("providerSearchResults").innerHTML =
+            "<p style='color:red;'>Error loading provider.</p>";
+        });
+    }
+  </script>
 </body>
 </html>
