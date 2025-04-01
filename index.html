@@ -12,14 +12,14 @@
       padding: 0;
       display: flex;
       justify-content: center;
-      align-items: center;
-      height: 100vh;
+      align-items: start;
+      min-height: 100vh;
     }
 
     .container {
       background: white;
       padding: 20px;
-      max-width: 800px;
+      max-width: 900px;
       width: 100%;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -80,20 +80,34 @@
       text-align: right;
       margin-top: 10px;
     }
+
+    #error {
+      color: red;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Utility Billing System</h1>
 
-    <h2>Search</h2>
-    <input type="number" id="customerId" placeholder="Enter Customer ID" />
-    <button onclick="searchCustomer()">Search Customer</button><br />
-    <input type="number" id="providerId" placeholder="Enter Provider ID" />
-    <button onclick="searchProvider()">Search Provider</button>
+    <!-- Search Section -->
+    <div>
+      <h2>Search</h2>
+      <input type="number" id="customerId" placeholder="Enter Customer ID">
+      <button onclick="searchCustomer()">Search Customer</button>
+      <br><br>
+      <input type="number" id="providerId" placeholder="Enter Provider ID">
+      <button onclick="searchProvider()">Search Provider</button>
+    </div>
 
+    <!-- Customer Results -->
     <div id="customerSearchResults" class="result-section"></div>
+
+    <!-- Provider Results -->
     <div id="providerSearchResults" class="result-section"></div>
+
+    <div id="error"></div>
   </div>
 
   <script>
@@ -106,6 +120,8 @@
         .then(data => {
           const section = document.getElementById("customerSearchResults");
           section.innerHTML = "";
+          document.getElementById("providerSearchResults").innerHTML = "";
+          window.scrollTo({ top: 0, behavior: 'smooth' });
 
           if (data.error) {
             section.innerHTML = `<p style="color:red;">${data.error}</p>`;
@@ -113,7 +129,13 @@
           }
 
           let html = `
-            <h3>Customer: ${data.name} (ID: ${data.id})</h3>
+            <h3>Customer Info</h3>
+            <p><strong>Name:</strong> ${data.name}</p>
+            <p><strong>ID:</strong> ${data.id}</p>
+            <p><strong>Email:</strong> ${data.email}</p>
+            <p><strong>Address:</strong> ${data.address}</p>
+            <p><strong>Current Balance:</strong> $${data.balance.toFixed(2)}</p>
+            <h4>Service Breakdown</h4>
             <table>
               <tr>
                 <th>Service</th>
@@ -144,7 +166,7 @@
         })
         .catch(err => {
           document.getElementById("customerSearchResults").innerHTML =
-            "<p style='color:red;'>Error loading customer.</p>";
+            "<p style='color:red;'>Error loading customer data.</p>";
         });
     }
 
@@ -157,6 +179,8 @@
         .then(data => {
           const section = document.getElementById("providerSearchResults");
           section.innerHTML = "";
+          document.getElementById("customerSearchResults").innerHTML = "";
+          window.scrollTo({ top: 0, behavior: 'smooth' });
 
           if (data.error) {
             section.innerHTML = `<p style="color:red;">${data.error}</p>`;
@@ -169,24 +193,28 @@
               <tr>
                 <th>Customer Name</th>
                 <th>Email</th>
-                <th>Services</th>
+                <th>Service</th>
+                <th>Amount Owed</th>
               </tr>`;
 
           data.customers.forEach(cust => {
-            html += `
-              <tr>
-                <td>${cust.name}</td>
-                <td>${cust.email}</td>
-                <td>${cust.services.join(", ")}</td>
-              </tr>`;
+            cust.services.forEach(service => {
+              html += `
+                <tr>
+                  <td>${cust.name}</td>
+                  <td>${cust.email}</td>
+                  <td>${service.name}</td>
+                  <td>$${service.cost.toFixed(2)}</td>
+                </tr>`;
+            });
           });
 
-          html += `</table>`;
+          html += `</table><div class="total">Total Income: $${data.totalIncome.toFixed(2)}</div>`;
           section.innerHTML = html;
         })
         .catch(err => {
           document.getElementById("providerSearchResults").innerHTML =
-            "<p style='color:red;'>Error loading provider.</p>";
+            "<p style='color:red;'>Error loading provider data.</p>";
         });
     }
   </script>

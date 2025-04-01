@@ -17,9 +17,10 @@ void outputJsonForCustomer(int customerId) {
             cout << "{";
             cout << "\"id\":" << customer.id << ",";
             cout << "\"name\":\"" << customer.name << "\",";
+            cout << "\"email\":\"" << customer.email << "\",";
+            cout << "\"address\":\"" << customer.address << "\",";
             cout << "\"balance\":" << customer.balance << ",";
 
-            // Provider + usage + cost per service
             cout << "\"services\":{";
             bool first = true;
             for (const auto& [service, usage] : customer.usage) {
@@ -44,7 +45,6 @@ void outputJsonForCustomer(int customerId) {
         }
     }
 
-    // Customer not found
     cout << "{\"error\":\"Customer not found\"}";
 }
 
@@ -56,20 +56,23 @@ void outputJsonForProvider(int providerId) {
         return;
     }
 
-    vector<string> servicesFromThisProvider;
-    for (const auto& [name, _] : providers[providerId].services) {
-        servicesFromThisProvider.push_back(name);
-    }
+    double totalIncome = 0.0;
 
-    cout << "{ \"provider\":\"" << providers[providerId].name << "\",";
+    cout << "{";
+    cout << "\"provider\":\"" << providers[providerId].name << "\",";
     cout << "\"customers\":[";
 
     bool firstCustomer = true;
     for (const auto& customer : customers) {
-        vector<string> matchedServices;
+        vector<pair<string, double>> matchedServices;
+
         for (const auto& [service, pid] : customer.providerSelection) {
             if (pid == providerId) {
-                matchedServices.push_back(service);
+                int usage = customer.usage.at(service);
+                const Service& svc = providers[providerId].services.at(service);
+                double cost = svc.fixedRate + svc.unitRate * usage;
+                matchedServices.emplace_back(service, cost);
+                totalIncome += cost;
             }
         }
 
@@ -81,7 +84,10 @@ void outputJsonForProvider(int providerId) {
             cout << "\"services\":[";
             for (size_t i = 0; i < matchedServices.size(); ++i) {
                 if (i > 0) cout << ",";
-                cout << "\"" << matchedServices[i] << "\"";
+                cout << "{";
+                cout << "\"name\":\"" << matchedServices[i].first << "\",";
+                cout << "\"cost\":" << matchedServices[i].second;
+                cout << "}";
             }
             cout << "]";
             cout << "}";
@@ -89,7 +95,9 @@ void outputJsonForProvider(int providerId) {
         }
     }
 
-    cout << "]}";
+    cout << "],";
+    cout << "\"totalIncome\":" << totalIncome;
+    cout << "}";
 }
 
 int main() {
