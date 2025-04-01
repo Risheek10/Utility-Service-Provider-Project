@@ -7,6 +7,8 @@
 
 using namespace std;
 
+void initializePaymentStatus();
+
 // Structure representing a utility service offered by providers.
 struct Service {
     string name;      // e.g., "Natural Gas", "Electric", etc.
@@ -34,6 +36,8 @@ struct Customer {
     map<string, int> providerSelection;
     // The current balance (accumulated bill) for the customer.
     double balance;
+    //map for payment status
+    map<string, bool> paymentStatus;
 };
 
 // Global vectors that will store all providers and customers.

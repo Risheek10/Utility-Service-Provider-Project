@@ -729,3 +729,13 @@ vector<Customer> customers = {
         0.0
     }    
 };
+
+void initializePaymentStatus() {
+    for (auto& customer : customers) {
+        for (const auto& [service, _] : customer.usage) {
+            customer.paymentStatus[service] = (rand() % 10 < 8); // 80% paid
+        }
+    }
+}
+
+

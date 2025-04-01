@@ -83,15 +83,22 @@ void outputMonthlyProviderData(int providerId, int month) {
 
     bool firstCustomer = true;
     for (const auto& customer : customers) {
-        vector<pair<string, double>> matchedServices;
+        vector<tuple<string, double, string>> matchedServices;
 
         for (const auto& [service, pid] : customer.providerSelection) {
             if (pid == providerId) {
                 int usage = monthlyUsage[customer.id][service][month - 1];
                 const Service& svc = providers[pid].services.at(service);
                 double cost = calculateMonthlyCost(svc, usage);
-                matchedServices.emplace_back(service, cost);
-                totalIncome += cost;
+
+                bool paid = customer.paymentStatus.count(service) ? customer.paymentStatus.at(service) : true;
+                string status = paid ? "Paid" : "Overdue";
+
+                if (paid) {
+                    totalIncome += cost;
+                }
+
+                matchedServices.emplace_back(service, cost, status);
             }
         }
 
@@ -104,8 +111,9 @@ void outputMonthlyProviderData(int providerId, int month) {
             for (size_t i = 0; i < matchedServices.size(); ++i) {
                 if (i > 0) cout << ",";
                 cout << "{";
-                cout << "\"name\":\"" << matchedServices[i].first << "\",";
-                cout << "\"cost\":" << matchedServices[i].second;
+                cout << "\"name\":\"" << get<0>(matchedServices[i]) << "\",";
+                cout << "\"cost\":" << get<1>(matchedServices[i]) << ",";
+                cout << "\"status\":\"" << get<2>(matchedServices[i]) << "\"";
                 cout << "}";
             }
             cout << "]";
@@ -118,6 +126,7 @@ void outputMonthlyProviderData(int providerId, int month) {
     cout << "\"totalIncome\":" << totalIncome;
     cout << "}";
 }
+
 
 void outputFullProviderData(int providerId) {
     cout << "Content-Type: application/json\n\n";
@@ -129,15 +138,19 @@ void outputFullProviderData(int providerId) {
 
     bool firstCustomer = true;
     for (const auto& customer : customers) {
-        vector<pair<string, double>> matchedServices;
+        vector<tuple<string, double, string>> matchedServices;
 
         for (const auto& [service, pid] : customer.providerSelection) {
             if (pid == providerId) {
+                bool paid = customer.paymentStatus.count(service) ? customer.paymentStatus.at(service) : true;
                 int usage = customer.usage.at(service);
                 const Service& svc = providers[pid].services.at(service);
                 double cost = calculateMonthlyCost(svc, usage);
-                matchedServices.emplace_back(service, cost);
-                totalIncome += cost;
+
+                string status = paid ? "Paid" : "Overdue";
+                if (paid) totalIncome += cost;
+
+                matchedServices.emplace_back(service, cost, status);
             }
         }
 
@@ -150,8 +163,9 @@ void outputFullProviderData(int providerId) {
             for (size_t i = 0; i < matchedServices.size(); ++i) {
                 if (i > 0) cout << ",";
                 cout << "{";
-                cout << "\"name\":\"" << matchedServices[i].first << "\",";
-                cout << "\"cost\":" << matchedServices[i].second;
+                cout << "\"name\":\"" << get<0>(matchedServices[i]) << "\",";
+                cout << "\"cost\":" << get<1>(matchedServices[i]) << ",";
+                cout << "\"status\":\"" << get<2>(matchedServices[i]) << "\"";
                 cout << "}";
             }
             cout << "]";
@@ -164,6 +178,7 @@ void outputFullProviderData(int providerId) {
     cout << "\"totalIncome\":" << totalIncome;
     cout << "}";
 }
+
 
 int main() {
     string query = getenv("QUERY_STRING") ? getenv("QUERY_STRING") : "";
@@ -179,6 +194,8 @@ int main() {
             params[key] = value;
         }
     }
+
+    initializePaymentStatus();
 
     generateMonthlyUsage();
 

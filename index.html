@@ -95,6 +95,17 @@
     #payButton:hover {
       background-color: darkgreen;
     }
+
+    .status-paid {
+    color: green;
+    font-weight: bold;
+    }
+
+    .status-overdue {
+    color: red;
+    font-weight: bold;
+    }
+
   </style>
 </head>
 <body>
@@ -112,17 +123,18 @@
     
     <br><br>
     
-    <label for="monthSelect">Select Month:</label>
-    <select id="monthSelect">
-        <option value="1">Month 1</option>
-        <option value="2">Month 2</option>
-        <option value="3">Month 3</option>
-        <option value="4">Month 4</option>
-        <option value="5">Month 5</option>
-        <option value="6">Month 6</option>
-    </select>
-    <button onclick="searchMonthlyIncome()">View Monthly Income</button>
-    
+    <div id="monthControls" style="display: none;">
+        <label for="monthSelect">Select Month:</label>
+        <select id="monthSelect">
+          <option value="1">Month 1</option>
+          <option value="2">Month 2</option>
+          <option value="3">Month 3</option>
+          <option value="4">Month 4</option>
+          <option value="5">Month 5</option>
+          <option value="6">Month 6</option>
+        </select>
+        <button onclick="searchMonthlyIncome()">View Monthly Income</button>
+      </div>
     </div>
 
     <!-- Customer Results -->
@@ -145,6 +157,7 @@
           const section = document.getElementById("customerSearchResults");
           section.innerHTML = "";
           document.getElementById("providerSearchResults").innerHTML = "";
+          document.getElementById("monthControls").style.display = "none";
           window.scrollTo({ top: 0, behavior: 'smooth' });
 
           if (data.error) {
@@ -222,6 +235,7 @@
           const section = document.getElementById("providerSearchResults");
           section.innerHTML = "";
           document.getElementById("customerSearchResults").innerHTML = "";
+          document.getElementById("monthControls").style.display = "block";
           window.scrollTo({ top: 0, behavior: 'smooth' });
 
           if (data.error) {
@@ -237,6 +251,7 @@
                 <th>Email</th>
                 <th>Service</th>
                 <th>Amount Owed</th>
+                <th>Status</th>
               </tr>`;
 
           data.customers.forEach(cust => {
@@ -247,6 +262,9 @@
                   <td>${cust.email}</td>
                   <td>${service.name}</td>
                   <td>$${service.cost.toFixed(2)}</td>
+                  <td class="${service.status === 'Paid' ? 'status-paid' : 'status-overdue'}">
+                    ${service.status}
+                  </td>
                 </tr>`;
             });
           });
@@ -287,6 +305,7 @@
             <th>Email</th>
             <th>Service</th>
             <th>Cost</th>
+            <th>Status</th>
           </tr>`;
 
       data.customers.forEach(cust => {
@@ -297,6 +316,7 @@
               <td>${cust.email}</td>
               <td>${service.name}</td>
               <td>$${service.cost.toFixed(2)}</td>
+              <td class="${service.status === 'Paid' ? 'status-paid' : 'status-overdue'}">${service.status}</td>
             </tr>`;
         });
       });
@@ -306,7 +326,7 @@
     })
     .catch(err => {
       document.getElementById("providerSearchResults").innerHTML =
-        "<p style='color:red;'>Error loading monthly data.</p>";
+        "<p style='color:red;'>Error loading monthly income data.</p>";
     });
 }
 
