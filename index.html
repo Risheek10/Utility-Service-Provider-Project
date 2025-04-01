@@ -55,7 +55,7 @@
             background: #0056b3;
         }
 
-        #customerInfo, #billSection {
+        #customerInfo, #billSection, #auditorSection {
             margin-top: 20px;
             text-align: left;
         }
@@ -91,20 +91,47 @@
             color: red;
             font-size: 14px;
         }
+
+        #loginSection {
+            display: block;
+        }
+
+        #customerSection, #auditorSection {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Utility Billing System</h1>
-        
+
+        <!-- Login Section -->
+        <div id="loginSection">
+            <h2>Login</h2>
+            <input type="text" id="username" placeholder="Enter Username">
+            <button onclick="login()">Login</button>
+            <div id="error"></div>
+        </div>
+
+        <!-- Customer Portal -->
         <div id="customerSection">
             <h2>Customer Portal</h2>
             <input type="number" id="customerId" placeholder="Enter Customer ID">
             <button onclick="loadCustomer()">Load</button>
             <div id="customerInfo"></div>
             <div id="error"></div> <!-- Display error if any -->
+            <button onclick="goToLogin()">Back to Login</button> <!-- Logout button -->
         </div>
-        
+
+        <!-- Auditor Portal -->
+        <div id="auditorSection">
+            <h2>Auditor Portal</h2>
+            <button onclick="viewCustomers()">View Customer List</button>
+            <div id="auditorInfo"></div>
+            <button onclick="goToLogin()">Back to Login</button> <!-- Logout button -->
+        </div>
+
+        <!-- Bill Section -->
         <div id="billSection" style="display:none;">
             <h2>Bill Details</h2>
             <table id="usageTable">
@@ -123,13 +150,30 @@
     </div>
 
     <script>
+        let currentRole = '';
+
+        function login() {
+            const username = document.getElementById('username').value;
+            if (username === 'customer1') {
+                currentRole = 'customer';
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('customerSection').style.display = 'block';
+            } else if (username === 'auditor1') {
+                currentRole = 'auditor';
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('auditorSection').style.display = 'block';
+            } else {
+                document.getElementById('error').textContent = 'Invalid username.';
+            }
+        }
+
         function loadCustomer() {
             const customerId = document.getElementById('customerId').value;
             if (!customerId) {
                 alert("Please enter a valid Customer ID.");
                 return;
             }
-            
+
             fetch(`/cgi-bin/billing.cgi?id=${customerId}`)
                 .then(response => response.json())
                 .then(data => {
@@ -175,6 +219,25 @@
             
             document.getElementById('totalDue').textContent = total.toFixed(2);
             document.getElementById('billSection').style.display = 'block';
+        }
+
+        function viewCustomers() {
+            const customerList = ['customer1', 'customer2', 'customer3'];
+            let customerListHtml = "<ul>";
+            customerList.forEach(customer => {
+                customerListHtml += `<li>${customer}</li>`;
+            });
+            customerListHtml += "</ul>";
+            document.getElementById('auditorInfo').innerHTML = `Customer List: ${customerListHtml}`;
+        }
+
+        function goToLogin() {
+            // Reset the page to show the login form
+            document.getElementById('customerSection').style.display = 'none';
+            document.getElementById('auditorSection').style.display = 'none';
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('username').value = ''; // Clear the username input
+            document.getElementById('error').textContent = ''; // Clear any error messages
         }
     </script>
 </body>
