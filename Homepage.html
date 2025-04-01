@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utility Services Management System</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f5f7fa;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e5799 0%, #207cca 100%);
+            color: white;
+            padding: 1rem 2rem;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            height: 60px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .intro {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        }
+        
+        .feature-card h3 {
+            color: #207cca;
+            margin-top: 0;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: #333;
+            color: white;
+            margin-top: 2rem;
+        }
+        .logo {
+        height: 100px;    /* or however big you want it */
+        width: auto;      /* this preserves the aspect ratio */
+        object-fit: contain;
+        }
+
+        .hero-section {
+    background-image: url('images/hero.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 850px;
+    position: relative;
+    color: white;
+  }
+
+  .hero-section .overlay {
+    background: rgba(0, 0, 0, 0.5);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .hero-section h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+    color: #ffffff;
+  }
+  
+  .hero-section p {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .hero-section .btn {
+    background-color: #0b7221;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Utility Services Management System</h1>
+        <img src="images/logo.png" alt="CoolUtil Logo" class="logo">
+    </header>
+
+    <section class="hero-section">
+        <div class="overlay">
+        <img src="images/logo.png" width="300px" alt="Logo"/>
+          <h1>Utility Billing Services</h1>
+          <p>The Best Quality at The Best Price For Everyone</p>
+          <a href="index.html" class="btn">Log in</a>
+        </div>
+      </section>
+    
+    <div class="container">
+        <section class="intro">
+            <h2>Streamlining Utility Service Management</h2>
+            <p>Our Utility Services Management System provides a comprehensive solution for managing multiple utility providers, customer accounts, billing, and service tracking all in one platform.</p>
+            <p>Designed for utility service providers to efficiently manage their operations while giving customers transparent access to their usage and billing information.</p>
+        </section>
+        
+        <section class="features">
+            <div class="feature-card">
+                <h3>Multi-Utility Support</h3>
+                <p>Manage all utility types including electricity, water, gas, internet, and telecom services through a unified interface.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Customer Portal</h3>
+                <p>Customers can view their usage, pay bills, and compare service options from different providers.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Provider Analytics</h3>
+                <p>Comprehensive reporting tools for providers to track income, overdue payments, and service demand.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Automated Billing</h3>
+                <p>System calculates charges automatically including fixed and variable components with overdue tracking.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Competitive Marketplace</h3>
+                <p>Customers can choose different providers for different services to get the best rates.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Real-time Monitoring</h3>
+                <p>Track usage patterns and payment status across all services in real time.</p>
+            </div>
+        </section>
+    </div>
+    
+    <footer>
+        <p>&copy; 2023 CoolUtil Utility Services Platform. All rights reserved.</p>
+    </footer>
+</body>
+</html>

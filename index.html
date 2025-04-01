@@ -39,7 +39,7 @@
 
     button {
       padding: 10px 15px;
-      margin: 0 5px;
+      margin: 5px;
       background-color: #007BFF;
       color: white;
       border: none;
@@ -85,6 +85,16 @@
       color: red;
       margin-top: 10px;
     }
+
+    #payButton {
+      display: block;
+      margin: 15px auto;
+      background-color: green;
+    }
+
+    #payButton:hover {
+      background-color: darkgreen;
+    }
   </style>
 </head>
 <body>
@@ -97,8 +107,22 @@
       <input type="number" id="customerId" placeholder="Enter Customer ID">
       <button onclick="searchCustomer()">Search Customer</button>
       <br><br>
-      <input type="number" id="providerId" placeholder="Enter Provider ID">
-      <button onclick="searchProvider()">Search Provider</button>
+    <input type="number" id="providerId" placeholder="Enter Provider ID">
+    <button onclick="searchProvider()">Search Provider (All Time)</button>
+    
+    <br><br>
+    
+    <label for="monthSelect">Select Month:</label>
+    <select id="monthSelect">
+        <option value="1">Month 1</option>
+        <option value="2">Month 2</option>
+        <option value="3">Month 3</option>
+        <option value="4">Month 4</option>
+        <option value="5">Month 5</option>
+        <option value="6">Month 6</option>
+    </select>
+    <button onclick="searchMonthlyIncome()">View Monthly Income</button>
+    
     </div>
 
     <!-- Customer Results -->
@@ -111,7 +135,7 @@
   </div>
 
   <script>
-    function searchCustomer() {
+    function searchCustomer(paid = false) {
       const id = document.getElementById("customerId").value;
       if (!id) return alert("Enter a Customer ID");
 
@@ -162,6 +186,13 @@
           }
 
           html += `</table><div class="total">Total Owed: $${total.toFixed(2)}</div>`;
+
+          if (data.balance > 0) {
+            html += `<button id="payButton" onclick="payNow(${data.id})">Pay Now</button>`;
+          } else {
+            html += `<p style="text-align:center; color:green; font-weight:bold;">Bill Paid</p>`;
+          }
+
           section.innerHTML = html;
         })
         .catch(err => {
@@ -169,6 +200,17 @@
             "<p style='color:red;'>Error loading customer data.</p>";
         });
     }
+
+    function payNow(id) {
+  fetch(`/cgi-bin/billing.cgi?id=${id}&pay=1`)
+    .then(res => res.json())
+    .then(data => {
+      // Refresh the customer view only
+      document.getElementById("customerId").value = id;
+      searchCustomer(true);
+    });
+}
+
 
     function searchProvider() {
       const id = document.getElementById("providerId").value;
@@ -217,6 +259,57 @@
             "<p style='color:red;'>Error loading provider data.</p>";
         });
     }
+
+    function searchMonthlyIncome() {
+  const pid = document.getElementById("providerId").value;
+  const month = document.getElementById("monthSelect").value;
+  if (!pid) return alert("Enter provider ID");
+
+  fetch(`/cgi-bin/billing.cgi?provider=${pid}&month=${month}`)
+    .then(res => res.json())
+    .then(data => {
+      const section = document.getElementById("providerSearchResults");
+      section.innerHTML = "";
+      document.getElementById("customerSearchResults").innerHTML = "";
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (data.error) {
+        section.innerHTML = `<p style="color:red;">${data.error}</p>`;
+        return;
+      }
+
+      let html = `<h3>Provider: ${data.provider}</h3>`;
+      html += `<p><strong>Month ${data.month} Total Income:</strong> $${data.totalIncome.toFixed(2)}</p>`;
+      html += `
+        <table>
+          <tr>
+            <th>Customer Name</th>
+            <th>Email</th>
+            <th>Service</th>
+            <th>Cost</th>
+          </tr>`;
+
+      data.customers.forEach(cust => {
+        cust.services.forEach(service => {
+          html += `
+            <tr>
+              <td>${cust.name}</td>
+              <td>${cust.email}</td>
+              <td>${service.name}</td>
+              <td>$${service.cost.toFixed(2)}</td>
+            </tr>`;
+        });
+      });
+
+      html += `</table>`;
+      section.innerHTML = html;
+    })
+    .catch(err => {
+      document.getElementById("providerSearchResults").innerHTML =
+        "<p style='color:red;'>Error loading monthly data.</p>";
+    });
+}
+
   </script>
 </body>
 </html>

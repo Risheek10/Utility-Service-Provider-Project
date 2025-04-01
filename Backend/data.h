@@ -19,6 +19,7 @@ struct Provider {
     int id;                          // Unique provider ID (e.g., 0 through 9)
     string name;                     // Provider name
     map<string, Service> services;   // Services offered mapped by service name
+    vector<double> monthlyIncome = vector<double>(6, 0.0); // 6 months
 };
 
 // Structure representing a customer.
