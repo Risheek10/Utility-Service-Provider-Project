@@ -13,14 +13,14 @@
 
 - Simulates 6 months of utility service data
 
-# Compiling the code
+# Compiling and running the code
 - Make sure to be in the "Backend" folder while you compile
 
 - Do **g++ billing.cpp data.cpp -o ../cgi-bin/billing.cgi**
 
 - After compiling, go back to the project root diretory
 
-- Do "**python server.py**" to get the local host running. If the server does not start go into the server.py code and change the host to 4000 or an unused port.
+- Do "**python server.py**" to get the local host running. If the server does not start go into the server.py code and change the port to 4000 or an unused port.
   
 - Click the Localhost link and follow the menu-driven interface to:
 
