@@ -1,6 +1,6 @@
 # Utility-Service-Provider-Project
 # Overview
-- A C++ application that manages utility services (Natural Gas, Internet, Hydro) for multiple providers and customers, tracking billing, payments, and service subscriptions over a 6-month period.
+- A C++ application that manages utility services (Natural Gas, Internet, Hydro, etc...) for multiple providers and customers, tracking billing, payments, and service subscriptions over a 6-month period.
 
 # Features
 - Manages 10 utility providers and 100 customers
