@@ -16,14 +16,13 @@
 # Compiling the code
 - Make sure to be in the "Backend" folder while you compile
 
-  **g++ billing.cpp data.cpp -o ../cgi-bin/billing.cgi**
+- Do **g++ billing.cpp data.cpp -o ../cgi-bin/billing.cgi**
 
-- After compiling, do "**cd ..**" back to the project diretory
+- After compiling, go back to the project root diretory
 
-- Do "**python server.py**" to get the local host running
-
-# Usage
-- Run the compiled program and follow the menu-driven interface to:
+- Do "**python server.py**" to get the local host running. If the server does not start go into the server.py code and change the host to 4000 or an unused port.
+  
+- Click the Localhost link and follow the menu-driven interface to:
 
 - View provider/customer records
 
@@ -33,4 +32,9 @@
 - Uses object-oriented design with classes for Providers, Customers, and UtilityServices
 
 - Implements proper data encapsulation and relationships
+
+# Contributions
+- Tayo Alalade (Billing.cpp, Billing.h, Index.html, Search.html, Server.py)
+- Risheek Jayakumar (Billing.cpp, Server.py)
+- Jola Amusat (Index.html)
 
