@@ -13,16 +13,21 @@
 
 - Simulates 6 months of utility service data
 
+# Compiling the code
+- Make sure to be in the "Backend" folder while you compile
+
+  **g++ billing.cpp data.cpp -o ../cgi-bin/billing.cgi**
+
+- After compiling, do "**cd ..**" back to the project diretory
+
+- Do "**python server.py**" to get the local host running
+
 # Usage
 - Run the compiled program and follow the menu-driven interface to:
 
 - View provider/customer records
 
 - Generate billing reports
-
-- Check payment statuses
-
-- Analyze service subscriptions
 
 # Data Structure
 - Uses object-oriented design with classes for Providers, Customers, and UtilityServices
