@@ -35,6 +35,6 @@
 
 # Contributions
 - Tayo Alalade (Billing.cpp, Billing.h, Index.html, Search.html, Server.py)
-- Risheek Jayakumar (Server.py)
+- Risheek Jayakumar (Server.py, GitHub repository, Initialized Billing.cpp and Index.html)
 - Jola Amusat (Index.html)
 
